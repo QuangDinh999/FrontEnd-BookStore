@@ -31,7 +31,7 @@ import routes from "routes.js";
 const Admin = (props) => {
   const mainContent = React.useRef(null);
   const location = useLocation();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('tokenAdmin');
   console.log(token);
   const navigate = useNavigate();
 
@@ -65,7 +65,7 @@ const Admin = (props) => {
     return "Brand";
   };
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('tokenAdmin');
     if (!token) {
       navigate('/login');
     }

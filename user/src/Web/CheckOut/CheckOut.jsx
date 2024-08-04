@@ -8,31 +8,51 @@ import formatCurrency from '../../asset/formatprice';
 
 function Checkout() {
     const [cartitems, setCartItems] = useState([])
-    const [customer, setCustomer] = useState({
-        name: "",
-        phoneNumber: "",
-        address: ""
-    })
-
+    const [payments, setPayment] = useState([])
+    const [total, setTotal] = useState(0)
     const [selectedPayment, setSelectedPayment] = useState('Chưa Chọn');
 
-    const HandleCustomerInfo = (e) => {
-        e.preventDefault()
-        console.log(customer);
-        if( localStorage.getItem('customerInfo')) {
-            localStorage.removeItem('customerInfo')
-        }
-        localStorage.setItem('customerInfo', JSON.stringify(customer))
-    }
+    
+    console.log();
 
-    console.log(localStorage.getItem('customerInfo'));
-    var total = 0
+    const [customer, setCustomer] = useState({
+        customer_id: JSON.parse(localStorage.getItem('user')).id,
+        name: "",
+        phoneNumber: "",
+        address: "", 
+        order_note: "",
+        cartitems: "",
+        totalPrice: 0
+    })
+
+    useEffect(() => {
+        let newTotal = 0
+        cartitems.forEach((cartitem) => {
+            newTotal+=cartitem.book.price * cartitem.amount
+        })
+        setTotal(newTotal)
+        setCustomer((prevCustomer) => (
+            {
+                ...prevCustomer,
+                totalPrice: total
+            }
+        ))
+    }, [cartitems])
+
+    console.log(total);
     useEffect(() => {
         const fetchData = async () => {
             try {
-                    const response = await axios.get('http://localhost/BackEnd-Laravel-BookStore/public/api/home/cartitems');
-                    setCartItems(response.data)
-                    console.log(response.data);
+                    const CartitemsRes = await axios.get('http://localhost/BackEnd-Laravel-BookStore/public/api/home/cartitems');
+                    const PaymentRes = await axios.get('http://localhost/BackEnd-Laravel-BookStore/public/api/payment');
+                    setCartItems(CartitemsRes.data)
+
+                    setCustomer({
+                        ...customer,
+                        cartitems: CartitemsRes.data
+                    })
+
+                    setPayment(PaymentRes.data)
                 }
             catch (error) {
                 console.log(error);
@@ -41,27 +61,28 @@ function Checkout() {
         fetchData()
     }, [])
 
-    console.log(cartitems);
-
+    
+    console.log(customer);
 
     const handlePayment = async () => {
         switch (selectedPayment) {
-            case "VNPAY":
+            case "VNPAY ATM":
                 try {
-                    const config = {
-                        headers: {
-                          "Access-Control-Allow-Origin": "*",
-                          "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-                        }
-                      };
-                    const response = await axios.post(`http://localhost/BackEnd-Laravel-BookStore/public/api/home/vnpay/${total}`);
+                    console.log(customer.totalPrice, customer.cartitems);  
+                    const response = await axios.post(`http://localhost/BackEnd-Laravel-BookStore/public/api/vnpay`, customer);
+                    console.log(response,response.data);
                     window.location.href = response.data.url;
-                    // console.log(response,response.data.url);
                 } catch (error) {
                     console.error('Payment error', error);
                 }
                 break;
-        
+            case "COD":
+                try {
+                    const response = await axios.post(`http://localhost/BackEnd-Laravel-BookStore/public/api/cod`, customer);
+                    console.log(response,response.data);
+                } catch (error) {
+                    console.error('Payment error', error);
+                }
             default:
                 break;
         }
@@ -76,7 +97,7 @@ function Checkout() {
         
     }
 
-    console.log(JSON.parse(localStorage.getItem('customerInfo')));
+
     return (
         <>
             <Header />
@@ -90,159 +111,101 @@ function Checkout() {
                             <li className="active">Xác nhận thanh toán</li>
                         </ol>
                     </div>
-                    {/*/breadcrums*/}
-                    {/* <div className="step-one">
-                        <h2 className="heading">Step1</h2>
-                    </div>
-                    <div className="checkout-options">
-                        <h3>New User</h3>
-                        <p>Checkout options</p>
-                        <ul className="nav">
-                            <li>
-                                <label>
-                                    <input type="checkbox" /> Register Account
-                                </label>
-                            </li>
-                            <li>
-                                <label>
-                                    <input type="checkbox" /> Guest Checkout
-                                </label>
-                            </li>
-                            <li>
-                                <a href="">
-                                    <i className="fa fa-times" />
-                                    Cancel
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
                     
-                    <div className="register-req">
-                        <p>
-                            Please use Register And Checkout to easily get access to your order
-                            history, or use Checkout as Guest
-                        </p>
-                    </div> */}
-                    {/*/register-req*/}
                     <div className="shopper-informations">
-                        <div className="row">
-                            <div className="col-sm-4">
-                                <div className="shopper-info">
-                                    <p>Shopper Information</p>
-                                    <form onSubmit={HandleCustomerInfo}>
-                                        <input
-                                        value={customer.name}
-                                        onChange={e => setCustomer({
-                                            ...customer,
-                                            name: e.target.value
-                                        })}
-                                        placeholder="Họ Tên Người Nhận Hàng" />
-                                        <input
-                                        value={customer.phoneNumber}
-                                        onChange={e => setCustomer({
-                                            ...customer,
-                                            phoneNumber: e.target.value
-                                        })}
-                                        placeholder="Số Điện thoại người Nhận" />
-                                        <input
-                                        value={customer.address}
-                                        onChange={e => setCustomer({
-                                            ...customer,
-                                            address: e.target.value
-                                        })}
-                                        placeholder="Địa Chỉ GIao Hàng" />
-                                        <button type='submit' className="btn btn-primary">Xác Nhận</button>
-                                    </form>
-                                </div>
-                            </div>
-                            {/* <div className="col-sm-5 clearfix">
-                                <div className="bill-to">
-                                    <p>Bill To</p>
-                                    <div className="form-one">
+                            <div className="row">
+                                <div className="col-sm-4">
+                                    <div className="shopper-info">
                                         <form>
-                                            <input type="text" placeholder="Company Name" />
-                                            <input type="text" placeholder="Email*" />
-                                            <input type="text" placeholder="Title" />
-                                            <input type="text" placeholder="First Name *" />
-                                            <input type="text" placeholder="Middle Name" />
-                                            <input type="text" placeholder="Last Name *" />
-                                            <input type="text" placeholder="Address 1 *" />
-                                            <input type="text" placeholder="Address 2" />
-                                        </form>
-                                    </div>
-                                    <div className="form-two">
-                                        <form>
-                                            <input type="text" placeholder="Zip / Postal Code *" />
-                                            <select>
-                                                <option>-- Country --</option>
-                                                <option>United States</option>
-                                                <option>Bangladesh</option>
-                                                <option>UK</option>
-                                                <option>India</option>
-                                                <option>Pakistan</option>
-                                                <option>Ucrane</option>
-                                                <option>Canada</option>
-                                                <option>Dubai</option>
-                                            </select>
-                                            <select>
-                                                <option>-- State / Province / Region --</option>
-                                                <option>United States</option>
-                                                <option>Bangladesh</option>
-                                                <option>UK</option>
-                                                <option>India</option>
-                                                <option>Pakistan</option>
-                                                <option>Ucrane</option>
-                                                <option>Canada</option>
-                                                <option>Dubai</option>
-                                            </select>
-                                            <input type="password" placeholder="Confirm password" />
-                                            <input type="text" placeholder="Phone *" />
-                                            <input type="text" placeholder="Mobile Phone" />
-                                            <input type="text" placeholder="Fax" />
+                                            <p>Shopper Information</p>
+                                            <input
+                                            value={customer.name}
+                                            onChange={e => setCustomer({
+                                                ...customer,
+                                                name: e.target.value
+                                            })}
+                                            placeholder="Họ Tên Người Nhận Hàng" />
+                                            <input
+                                            value={customer.phoneNumber}
+                                            onChange={e => setCustomer({
+                                                ...customer,
+                                                phoneNumber: e.target.value
+                                            })}
+                                            placeholder="Số Điện thoại người Nhận" />
+                                            <input
+                                            value={customer.address}
+                                            onChange={e => setCustomer({
+                                                ...customer,
+                                                address: e.target.value
+                                            })} 
+                                            placeholder="Địa Chỉ GIao Hàng" />
+                                            <h4>Phương Thức Thanh Toán</h4>
+                                            <div className="payment-options" style={{marginTop: '25px'}}>
+                                                {payments.map(payment => {
+                                                    return(
+                                                        <span key={payment.id}>
+                                                            <label>
+                                                                <input type="checkbox"
+                                                                checked={selectedPayment === payment.name}
+                                                                onChange={() => {
+                                                                    setSelectedPayment(payment.name)
+                                                                    setCustomer({
+                                                                        ...customer,
+                                                                        payment_id: payment.id
+                                                                    })
+                                                                }}
+                                                                /> {payment.name}
+                                                            </label>
+                                                        </span>
+                                                    )
+                                                })}
+                                            </div> 
+                                            <button type='submit' className="btn btn-primary">Xác Nhận</button>
                                         </form>
                                     </div>
                                 </div>
-                            </div> */}
-                            <div className="col-sm-8">
-                                <div className="order-message">
-                                    <p>Shipping Order</p>
-                                    <textarea
-                                        name="message"
-                                        placeholder="Notes about your order, Special Notes for Delivery"
-                                        rows={16}
-                                        defaultValue={""}
-                                    />
-                                    <label>
-                                        <input type="checkbox" /> Shipping to bill address
-                                    </label>
+                                
+                                <div className="col-sm-8">
+                                    <div className="order-message">
+                                        <p>Shipping Order</p>
+                                        <textarea
+                                            onChange={(e) => setCustomer({
+                                                ...customer,
+                                                order_note: e.target.value
+                                            })}
+                                            name="message"
+                                            placeholder="Notes about your order, Special Notes for Delivery"
+                                            rows={16}
+                                            defaultValue={""}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                           
                     </div>
                     <div className="review-payment">
                         <h2>Xem xét &amp; Thanh toán</h2>
                     </div>
                     <div className="table-responsive cart_info">
-                        <table className="table table-condensed">
+                        <table style={{textAlign: 'center'}} className="table table-condensed">
                             <thead>
                                 <tr className="cart_menu">
                                     <td className="image">Sản phẩm</td>
-                                    <td className="description" />
+                                    <td className="description" >Tên sản phẩm</td>
                                     <td className="price">Giá</td>
                                     <td className="quantity">Số lượng</td>
                                     <td className="total">Tổng giá</td>
-                                    <td />
+                                    <td/>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody >
                             {cartitems.map((cartitem) => {
-                                total+=cartitem.book.price * cartitem.amount
                                     return (
                                         
                                         <tr key={cartitem.id}>
                                             <td className="cart_product">
                                                 <a href="">
-                                                    <img width={'100px'} src= {"images/img/" + cartitem.book.img} alt="" />
+                                                    <img style={{float: 'left'}} width={'100px'} src= {"images/img/" + cartitem.book.img} alt="" />
                                                 </a>
                                             </td>
                                             <td className="cart_description">
@@ -256,60 +219,37 @@ function Checkout() {
                                             </td>
                                             <td className="cart_quantity">
                                                 <div className="cart_quantity_button">
-                                                    <a className="cart_quantity_up" href="">
-                                                        {" "}
-                                                        +{" "}
-                                                    </a>
-                                                    <input
-                                                        className="cart_quantity_input"
-                                                        type="text"
-                                                        name="quantity"
-                                                        defaultValue={cartitem.amount}
-                                                        autoComplete="off"
-                                                        size={2}
-                                                    />
-                                                    <a className="cart_quantity_down" href="">
-                                                        {" "}
-                                                        -{" "}
-                                                    </a>
+                                                    
+                                                <span className="cart_quantity_display">{cartitem.amount}</span>
+                                                    
                                                 </div>
                                             </td>
                                             <td className="cart_total">
                                                 <p className="cart_total_price">{formatCurrency(cartitem.book.price * cartitem.amount)} VNĐ</p>
                                             </td>
-                                            <td className="cart_delete">
-                                                <a className="cart_quantity_delete" href="">
-                                                    <i className="fa fa-times" />
-                                                </a>
-                                            </td>
+                                            
                                         </tr>   
                                     )
-                                })}
+                            })}
+                            
                                 
                                 <tr>
                                     <td colSpan={4}>&nbsp;</td>
                                     <td colSpan={2}>
                                         <table className="table table-condensed total-result">
                                             <tbody>
-                                            <tr>
+                                                <tr>
                                                     <td>Phương thức thanh toán</td>
-                                                    <td>{selectedPayment}</td>
+                                                    <td><span>{selectedPayment}</span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>$59</td>
+                                                    <td></td>
                                                 </tr>
-                                                {/* <tr>
-                                                    <td>Exo Tax</td>
-                                                    <td>$2</td>
-                                                </tr>
-                                                <tr className="shipping-cost">
-                                                    <td>Shipping Cost</td>
-                                                    <td>Free</td>
-                                                </tr> */}
+                                                
                                                 <tr>
-                                                    <td>Tổng tiền</td>
+                                                    <td><h3>Tổng tiền</h3></td>
                                                     <td>
-                                                        <span>{formatCurrency(total)} VNĐ</span>
+                                                        <span><h3>{formatCurrency(total)} VNĐ</h3></span>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -319,28 +259,14 @@ function Checkout() {
                             </tbody>
                         </table>
                     </div>
-                    <div className="payment-options">
-                        <span>
-                            <label>
-                                <input type="checkbox"
-                                checked={selectedPayment === 'COD'}
-                                onChange={() => setSelectedPayment('COD')}
-                                /> COD
-                            </label>
-                        </span>
-                        <span>
-                            <label>
-                                <input type="checkbox" 
-                                checked={selectedPayment === 'VNPAY'}
-                                onChange={() => setSelectedPayment('VNPAY')}
-                                /> VNPAY ATM
-                            </label>
-                        </span>
                     
-                        <button className="btn btn-default" onClick={checkPayment} style={{backgroundColor: 'orange', width: '150px', height: '40px', border: 'none', float: 'right'}}>
+                    
+                        <div className="payment-options">
+                            <button className="btn btn-default" onClick={checkPayment} style={{backgroundColor: 'orange', width: '150px', height: '40px', border: 'none', float: 'right'}}>
                                     Mua ngay
-                        </button>
-                    </div>
+                            </button>
+                        </div>
+                    
                 </div>
             </section>{" "}
             {/*/#cart_items*/}

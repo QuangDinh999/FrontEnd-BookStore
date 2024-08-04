@@ -5,7 +5,7 @@ import Footer from '../../Component/Footer';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import formatCurrency from '../../asset/formatprice';
 function BookBySearch() {
     const location = useLocation()
     const {searchWord} = location.state || {}
@@ -35,7 +35,18 @@ function BookBySearch() {
        return name.includes(searchWordLower) || author.includes(searchWordLower)
     }) : []
 
-    console.log(searchBooks);
+    const handleCartItem = async (bookID, amount) => {
+        
+        const userID = JSON.parse(localStorage.getItem('user')).id
+        console.log(userID);
+        try {
+          const res = await axios.post('http://localhost/BackEnd-Laravel-BookStore/public/api/home/cartitems/add', {bookID, amount, userID})
+          console.log(res.data);
+           
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const displayBooks = searchBooks.length > 0 ? searchBooks : []
     
 
@@ -52,7 +63,7 @@ function BookBySearch() {
                     <div className="row">
                         <Sidebar />
                         <div className="col-sm-9 padding-right">
-                            <div className="features_items">
+                            <div className="features_items" style={{textAlign: 'center'}}>
                                 {/*features_items*/}
                                 <h2 className="title text-center">Tất cả mặt hàng</h2>
                                 {displayBooks.length > 0 ? (
@@ -64,24 +75,24 @@ function BookBySearch() {
                                                         <div className="productinfo text-center">
                                                             <Link to={'/product-detail'} state={{bookId: book.id, categoryId: book.categories_id}}>
                                                                 <img src={'images/img/' + book.img} alt="" />
-                                                                <h2>{book.price} VND</h2>
+                                                                <h2>{formatCurrency(book.price)} VNĐ</h2>
                                                                 <p>{book.name}</p>
                                                             </Link>
-                                                            <a href="#" className="btn btn-default add-to-cart">
+                                                            <button href="" onClick={() => handleCartItem(book.id, 1)} className="btn btn-default add-to-cart">
                                                                 <i className="fa fa-shopping-cart" />
                                                                 Thêm vào giỏ hàng
-                                                            </a>
+                                                            </button>
                                                         </div>
                                                         <div className="product-overlay">
                                                             <div className="overlay-content">
                                                                 <Link to={'/product-detail'} state={{bookId: book.id, categoryId: book.categories_id}}>
-                                                                    <h2>{book.price} VND</h2>
+                                                                    <h2>{formatCurrency(book.price)} VNĐ</h2>
                                                                     <p>{book.name}</p>
                                                                 </Link>
-                                                                <a href="#" className="btn btn-default add-to-cart">
+                                                                <button href="" onClick={() => handleCartItem(book.id, 1)} className="btn btn-default add-to-cart">
                                                                     <i className="fa fa-shopping-cart" />
                                                                     Thêm vào giỏ hàng
-                                                                </a>
+                                                                </button>
                                                             </div>
                                                         </div>
                                                     </div>

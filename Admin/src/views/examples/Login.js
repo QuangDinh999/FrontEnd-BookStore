@@ -42,12 +42,13 @@ const Login = () => {
     const handleSubmit = async (e) => {
       e.preventDefault();
       try {
-          const response = await axios.post('http://localhost/PHP_Book_Laravel-main/public/api/auth/login', {
+          const response = await axios.post('http://localhost/BackEnd-Laravel-BookStore/public/api/auth/login', {
               email,
               password,
           });
           console.log(response.data);
           localStorage.setItem('tokenAdmin', response.data.token);
+          localStorage.setItem('admin', JSON.stringify(response.data.user));
           navigate('/admin/index'); // Chuyển hướng đến trang admin
       } catch (error) {
           console.error('Login failed:', error);

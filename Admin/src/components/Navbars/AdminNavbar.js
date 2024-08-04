@@ -40,48 +40,50 @@ import { useNavigate } from "react-router-dom";
 
 const AdminNavbar = (props) => {
   const navigate = useNavigate();
-  const getUser = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        throw new Error('No token found');
-    }
+  // const getUser = async () => {
+  //   const token = localStorage.getItem('token');
+  //   if (!token) {
+  //       throw new Error('No token found');
+  //   }
   
-    try {
-        const response = await axios.get('http://localhost/PHP_Book_Laravel-main/public/api/user', {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching user:', error);
-        throw error;
-    }
-  };
+  //   try {
+  //       const response = await axios.get('http://localhost/PHP_Book_Laravel-main/public/api/user', {
+  //           headers: {
+  //               Authorization: `Bearer ${token}`
+  //           }
+  //       });
+  //       return response.data;
+  //   } catch (error) {
+  //       console.error('Error fetching user:', error);
+  //       throw error;
+  //   }
+  // };
   
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
   
-      useEffect(() => {
-          const fetchUser = async () => {
-              try {
-                  const userData = await getUser();
-                  setUser(userData[0]);
-                  localStorage.setItem('role', userData[0].role);
-              } catch (error) {
-                  console.error('Error fetching user data:', error);
-              }
-          };
+  //     useEffect(() => {
+  //         const fetchUser = async () => {
+  //             try {
+  //                 const userData = await getUser();
+  //                 setUser(userData[0]);
+  //                 localStorage.setItem('role', userData[0].role);
+  //             } catch (error) {
+  //                 console.error('Error fetching user data:', error);
+  //             }
+  //         };
   
-          fetchUser();
-      }, []);
+  //         fetchUser();
+  //     }, []);
   
-      if (!user) {
-          return <div>Loading...</div>;
-      }
-
+  //     if (!user) {
+  //         return <div>Loading...</div>;
+  //     }
+  const admin = JSON.parse(localStorage.getItem('admin'))
+  console.log(admin);
 
       const handleLogOut = () => {
-        localStorage.removeItem('token'); 
+        localStorage.removeItem('tokenAdmin'); 
+        localStorage.removeItem('admin'); 
         console.log('sss');
         
         navigate('/login')
@@ -120,7 +122,7 @@ const AdminNavbar = (props) => {
                   </span>
                   <Media className="ml-2 d-none d-lg-block">
                     <span className="mb-0 text-sm font-weight-bold">
-                      {user.username}/ {localStorage.getItem('role')} 
+                      {admin.username}/ {admin.role} 
                     </span>
                   </Media>
                 </Media>

@@ -22,7 +22,7 @@ const Category = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost/PHP_Book_Laravel-main/public/api/categories');
+      const response = await axios.get('http://localhost/BackEnd-Laravel-BookStore/public/api/categories');
       setCategoies(response.data);
       setLoading(false);
     } catch (error) {

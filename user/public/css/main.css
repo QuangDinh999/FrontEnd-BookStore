@@ -1637,18 +1637,19 @@ h2.title {
   margin: 15px -70px 10px 25px;
 }
 
-.cart_quantity_button a {
-  background:#F0F0E9;
-  color: #696763;
+
+.btn-updown {
+  background:#FE980F;
+  color: #F0F0E9;
   display: inline-block;
   font-size: 16px;
   height: 28px;
   overflow: hidden;
   text-align: center;
+  border-color: #FE980F;
   width: 35px;
   float: left;
 }
-
 
 .cart_quantity_input {
   color: #696763;
@@ -1658,7 +1659,12 @@ h2.title {
   font-family: 'Roboto',sans-serif;
   
 }
-
+.cart_quantity_display {
+  float: left;
+  border: 2px #F0F0E9 solid;
+  padding: 2px 10px;
+  
+}
 
 .cart_delete  {
   display: block;
@@ -1667,14 +1673,15 @@ h2.title {
 }
 
 
-.cart_delete a {
+.cart_delete button {
   background:#F0F0E9;
   color: #FFFFFF;
-  padding: 5px 7px;
-  font-size: 16px
+  padding: 5px 10px;
+  font-size: 16px;
+  border-color: #F0F0E9;
 }
 
-.cart_delete a:hover {
+.cart_delete button:hover {
   background:#FE980F
 }
 
@@ -1709,8 +1716,9 @@ h2.title {
   margin-bottom: 80px;
 }
 
-.total_area span {
+.total_area .total_price {
   float: right;
+  margin-top: -30px;
 }
 
 .total_area ul li {

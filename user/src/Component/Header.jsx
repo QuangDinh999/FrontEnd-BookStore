@@ -1,36 +1,14 @@
 import React, { useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { json, Link, NavLink } from 'react-router-dom';
 import SearchBox from './SearchBar';
 import axios from 'axios';
 
 function Header() {
     
-    // const getUser = async () => {
-    //     const token = localStorage.getItem('tokenUser');
-        
-    //     try {
-    //         const response = await axios.get('http://localhost/PHP_Book_Laravel-main/public/api/user', {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`
-    //             }
-    //         });
-    //         return response.data;
-    //     } catch (error) {
-    //         console.error('Error fetching user:', error);
-    //         throw error;
-    //     }
-    //   };
-
-        const [username, setUserName] = React.useState('')
-        useEffect(() => {
-            if(localStorage.getItem('user')) {
-                setUserName(localStorage.getItem('user').username)
-            }
-        }, [])
-
-        console.log();
-
-
+    
+    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : 'Khong co'
+    
+    console.log(user);
 
     return (
         <>
@@ -125,12 +103,12 @@ function Header() {
                                             <>
                                                 <li>
                                                     <Link to={'/login'}>
-                                                    <i className="fa fa-user" /> {username}
+                                                    <i className="fa fa-user" /> {user}
                                                     </Link>
                                                 </li>
                                                 <li>
                                                     <Link to={'/logout'} 
-                                                    onClick={() => { localStorage.removeItem('tokenUser'); window.location.reload(); }}>
+                                                    onClick={() => { localStorage.removeItem('tokenUser'); localStorage.removeItem('user'); window.location.reload(); }}>
                                                     <i className="fa fa-lock" />Đăng Xuất   
                                                     </Link>
                                                 </li>

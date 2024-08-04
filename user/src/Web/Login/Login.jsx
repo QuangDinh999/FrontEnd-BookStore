@@ -16,17 +16,20 @@ function Login() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('http://BackEnd-Laravel-BookStore/public/api/auth/login'
+            const response = await axios.post('http://localhost/BackEnd-Laravel-BookStore/public/api/auth/login'
                 , {email, password})
             localStorage.clear();
             localStorage.setItem('tokenUser', response.data.token)
-            localStorage.setItem('user', response.data.user)
-            console.log(response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user))
+            console.log(response.data);
+            
             navigate('/')
         } catch (error) {
             console.log(error);
         }
     }
+
+    
     return (
         <>
             <Header />

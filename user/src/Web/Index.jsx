@@ -5,6 +5,7 @@ import Footer from '../Component/Footer';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import formatCurrency from '../asset/formatprice';
 
 
 function Index() {
@@ -22,6 +23,21 @@ function Index() {
 
         fetchData();
     }, []);
+
+    const cartitem = []
+
+    const handleCartItem = async (bookID, amount) => {
+        
+        const userID = JSON.parse(localStorage.getItem('user')).id
+        console.log(userID);
+        try {
+          const res = await axios.post('http://localhost/BackEnd-Laravel-BookStore/public/api/home/cartitems/add', {bookID, amount, userID})
+          console.log(res.data);
+           
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     console.log(books);
     return (
@@ -121,7 +137,7 @@ function Index() {
                                                                     <img src={'images/img/' + book.img} alt="" />
                                                                     <h2>{book.price} VND</h2>
                                                                     <p>{book.name}</p>
-                                                                </Link>
+                                                                </Link> 
                                                                 <a href="#" className="btn btn-default add-to-cart">
                                                                     <i className="fa fa-shopping-cart" />
                                                                     Add to cart
@@ -143,7 +159,7 @@ function Index() {
                                                             <div className="productinfo text-center">
                                                                 <Link to={'/product-detail'} state={{bookId: book.id, categoryId: book.categories_id}}>
                                                                     <img src={'images/img/' + book.img} alt="" />
-                                                                    <h2>{book.price} VND</h2>
+                                                                    <h2>{formatCurrency(book.price)} VND</h2>
                                                                     <p>{book.name}</p>
                                                                 </Link>
                                                                 <a href="#" className="btn btn-default add-to-cart">
@@ -174,352 +190,7 @@ function Index() {
                                     </a>
                                 </div>
                             </div>
-                            {/*/recommended_items*/}
-                            {/*features_items*/}
-                            {/* <div className="category-tab">
                             
-                                <div className="col-sm-12">
-                                    <ul className="nav nav-tabs">
-                                        <li className="active">
-                                            <a href="#tshirt" data-toggle="tab">
-                                                T-Shirt
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#blazers" data-toggle="tab">
-                                                Blazers
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#sunglass" data-toggle="tab">
-                                                Sunglass
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#kids" data-toggle="tab">
-                                                Kids
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#poloshirt" data-toggle="tab">
-                                                Polo shirt
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="tab-content">
-                                    <div className="tab-pane fade active in" id="tshirt">
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery1.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery2.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery3.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery4.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="blazers">
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery4.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery3.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery2.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery1.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="sunglass">
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery3.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery4.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery1.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery2.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="kids">
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery1.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery2.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery3.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery4.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="poloshirt">
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery2.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery4.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery3.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-sm-3">
-                                            <div className="product-image-wrapper">
-                                                <div className="single-products">
-                                                    <div className="productinfo text-center">
-                                                        <img src="images/home/gallery1.jpg" alt="" />
-                                                        <h2>$56</h2>
-                                                        <p>Easy Polo Black Edition</p>
-                                                        <a href="#" className="btn btn-default add-to-cart">
-                                                            <i className="fa fa-shopping-cart" />
-                                                            Add to cart
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> */}
 
                             <div>
                                 <img style={{width: '100%', marginBottom: '42px'}} src="images/home/banner_manga.webp" alt="" />
@@ -538,10 +209,10 @@ function Index() {
                                                 <div className="productinfo text-center">
                                                     <Link to={'/product-detail'} state={{bookId: book.id, categoryId: book.categories_id}}>
                                                         <img src={'images/img/' + book.img} alt="" />
-                                                        <h2>{book.price} VND</h2>
+                                                        <h2>{formatCurrency(book.price)} VNĐ</h2>
                                                         <p>{book.name}</p>
                                                     </Link>
-                                                    <a href="#" className="btn btn-default add-to-cart">
+                                                    <a href="#" onClick={() => handleCartItem(book.id, 1)} className="btn btn-default add-to-cart">
                                                         <i className="fa fa-shopping-cart" />
                                                         Thêm vào giỏ hàng
                                                     </a>
@@ -549,13 +220,13 @@ function Index() {
                                                 <div className="product-overlay">
                                                     <div className="overlay-content">
                                                         <Link to={'/product-detail'} state={{bookId: book.id, categoryId: book.categories_id}}>
-                                                            <h2>{book.price} VND</h2>
+                                                            <h2>{formatCurrency(book.price)} VNĐ</h2>
                                                             <p>{book.name}</p>
                                                         </Link>
-                                                        <a href="#" className="btn btn-default add-to-cart">
+                                                        <button href="" onClick={() => handleCartItem(book.id, 1)} className="btn btn-default add-to-cart">
                                                             <i className="fa fa-shopping-cart" />
                                                             Thêm vào giỏ hàng
-                                                        </a>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>

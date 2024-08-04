@@ -38,7 +38,7 @@ import {
     const [loading, setLoading] = useState(true);
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost/PHP_Book_Laravel-main/public/api/book');
+        const response = await axios.get('http://localhost/BackEnd-Laravel-BookStore/public/api/book');
         setBooks(response.data);
         setLoading(false);
       } catch (error) {
@@ -300,11 +300,11 @@ import {
           selector: row => `${row.price.toLocaleString('vi-VN')} VND`,
           sortable: true,
         },
-        {
-          name: 'Tác giả',
-          selector: row => row.author,
-          sortable: true,
-        },
+        // {
+        //   name: 'Tác giả',
+        //   selector: row => row.author,
+        //   sortable: true,
+        // },
         {
           name: 'Năm xuất bản',
           selector: row => row.publish_year,
